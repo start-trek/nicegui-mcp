@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "nicegui-mcp": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/nicegui-mcp", "nicegui-mcp"]
+    }
+  }
+}

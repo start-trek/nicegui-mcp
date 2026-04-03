@@ -1,0 +1,25 @@
+from nicegui import ui
+
+
+@ui.page('/')
+def home() -> None:
+    ui.label('1')
+    ui.label('2')
+    ui.label('3')
+    ui.label('4')
+    ui.label('5')
+    ui.label('6')
+    ui.label('7')
+    ui.label('8')
+    ui.label('9')
+    ui.label('10')
+    ui.label('11')
+    ui.label('12')
+    ui.label('13')
+    ui.label('14')
+    ui.label('15')
+    ui.label('16')
+    ui.label('17')
+    ui.label('18')
+    ui.label('19')
+    ui.label('20')

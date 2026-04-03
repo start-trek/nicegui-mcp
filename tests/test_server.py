@@ -1,0 +1,49 @@
+from __future__ import annotations
+
+from nicegui_mcp.server import (
+    analyze_nicegui_code,
+    fix_nicegui_code,
+    generate_nicegui_component,
+    get_guidance,
+    list_topics,
+    search_guidance,
+    topic_index,
+)
+
+
+def test_list_topics_tool() -> None:
+    topics = list_topics()
+    assert len(topics) == 10
+    assert topics[0]["name"]
+
+
+def test_guidance_tool() -> None:
+    text = get_guidance("dialogs")
+    assert "persistent" in text
+
+
+def test_search_tool() -> None:
+    hits = search_guidance("scroll area", topics=["layout_spacing_scrolling"])
+    assert hits
+    assert all(hit["topic"] == "layout_spacing_scrolling" for hit in hits)
+
+
+def test_analyze_tool() -> None:
+    result = analyze_nicegui_code("ui.button('Save').props('width=50%')")
+    assert any(finding["rule_id"] == "NGL-003" for finding in result["findings"])
+
+
+def test_fix_tool() -> None:
+    result = fix_nicegui_code("ui.button('Save').props('width=50%')\n")
+    assert ".style('width: 50%')" in result["updated_code"]
+
+
+def test_generate_tool() -> None:
+    result = generate_nicegui_component("layout_shell")
+    assert result["kind"] == "layout_shell"
+    assert "ui.scroll_area" in result["code"]
+
+
+def test_topic_resource() -> None:
+    payload = topic_index()
+    assert "layout_spacing_scrolling" in payload

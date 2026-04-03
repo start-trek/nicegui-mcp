@@ -1,0 +1,54 @@
+from __future__ import annotations
+
+from typing import Literal
+
+from pydantic import BaseModel, Field
+
+
+class TopicInfo(BaseModel):
+    name: str
+    summary: str
+    tags: list[str] = Field(default_factory=list)
+
+
+class SearchHit(BaseModel):
+    topic: str
+    heading: str | None = None
+    snippet: str
+    score: float | None = None
+
+
+class Finding(BaseModel):
+    rule_id: str
+    severity: Literal["error", "warning", "info"]
+    title: str
+    message: str
+    suggestion: str | None = None
+    span_hint: str | None = None
+    confidence: Literal["high", "medium", "low"] = "medium"
+    auto_fixability: Literal["safe", "partial", "guidance_only"] = "guidance_only"
+
+
+class AnalysisResult(BaseModel):
+    findings: list[Finding] = Field(default_factory=list)
+    summary: str
+    focus_applied: list[str] | None = None
+
+
+class AppliedFix(BaseModel):
+    rule_id: str
+    description: str
+
+
+class FixResult(BaseModel):
+    updated_code: str
+    applied_fixes: list[AppliedFix] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
+    recommend_reanalysis: bool
+
+
+class GenerationResult(BaseModel):
+    kind: str
+    mode: str
+    code: str
+    notes: list[str] = Field(default_factory=list)

@@ -1,0 +1,48 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Testing
+.pytest_cache/
+**/.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Package metadata
+*.egg-info/
+**/*.egg-info/
+*.egg
+*.whl
+
+# Build artifacts
+build/
+dist/
+nicegui_mcp_built.zip
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test vault configs (local testing)
+test_vault_configs/
+
+# uv
+uv.lock
