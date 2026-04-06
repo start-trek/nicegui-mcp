@@ -6,7 +6,7 @@ from mcp.server.fastmcp import FastMCP
 
 from .analyzers import analyze_code
 from .fixers import fix_code
-from .generators import generate_component
+from .generators import generate_component, list_kinds
 from .registry import available_topics, get_topic, load_guidance_text, search_guidance_text
 from .reviewer import review_code
 
@@ -68,6 +68,15 @@ def review_nicegui_code(code: str, auto_fix: bool = True) -> dict:
 
 
 @mcp.tool()
+def list_component_kinds() -> list[dict]:
+    """List all available NiceGUI component generator kinds with descriptions.
+
+    Use this to discover valid `kind` values for `generate_nicegui_component`.
+    Each entry includes the kind name, a short description, and supported modes."""
+    return list_kinds()
+
+
+@mcp.tool()
 def list_topics() -> list[dict]:
     """List the bundled NiceGUI guidance topics with summaries and tags."""
     return [topic.model_dump(mode="json") for topic in available_topics()]
@@ -104,7 +113,12 @@ def fix_nicegui_code(code: str, aggressive: bool = False) -> dict:
 
 @mcp.tool()
 def generate_nicegui_component(kind: str, mode: str = "default", details_json: str | None = None) -> dict:
-    """Generate deterministic NiceGUI starter code for common layout, dialog, async, and component patterns."""
+    """Generate deterministic NiceGUI starter code for common layout, dialog, async, and component patterns.
+
+    Valid kinds: layout_shell, confirmation_dialog, async_action_flow, controller_service_page,
+    reusable_component, list_detail, filterable_table, form_sticky_actions, chart_sidebar_table.
+
+    Use `list_component_kinds` to discover kinds and their supported modes."""
     details = json.loads(details_json) if details_json else {}
     return generate_component(kind=kind, mode=mode, details=details).model_dump(mode="json")
 

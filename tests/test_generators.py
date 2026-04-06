@@ -2,7 +2,31 @@ from __future__ import annotations
 
 import ast
 
-from nicegui_mcp.generators import generate_component
+from nicegui_mcp.generators import generate_component, list_kinds
+
+
+def test_list_kinds_returns_all() -> None:
+    kinds = list_kinds()
+    assert len(kinds) == 9
+    for entry in kinds:
+        assert "kind" in entry
+        assert "description" in entry
+
+
+def test_component_kinds_match_generators() -> None:
+    list_kinds_set = {entry["kind"] for entry in list_kinds()}
+    generator_kinds = [
+        "layout_shell",
+        "confirmation_dialog", 
+        "async_action_flow",
+        "controller_service_page",
+        "reusable_component",
+        "list_detail",
+        "filterable_table",
+        "form_sticky_actions",
+        "chart_sidebar_table",
+    ]
+    assert list_kinds_set == set(generator_kinds)
 
 
 def test_all_generators_return_code() -> None:

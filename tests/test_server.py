@@ -5,6 +5,7 @@ from nicegui_mcp.server import (
     fix_nicegui_code,
     generate_nicegui_component,
     get_guidance,
+    list_component_kinds,
     list_topics,
     search_guidance,
     topic_index,
@@ -44,6 +45,11 @@ def test_generate_tool() -> None:
     result = generate_nicegui_component("layout_shell")
     assert result["kind"] == "layout_shell"
     assert "ui.scroll_area" in result["code"]
+
+
+def test_list_component_kinds_tool() -> None:
+    kinds = list_component_kinds()
+    assert len(kinds) == 9
 
 
 def test_topic_resource() -> None:

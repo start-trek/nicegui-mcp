@@ -4,10 +4,31 @@ from textwrap import dedent
 
 from .models import GenerationResult
 
+COMPONENT_KINDS: dict[str, str] = {
+    "layout_shell": "App shell with header, sidebar drawer, and scrollable content region.",
+    "confirmation_dialog": "Persistent confirmation dialog with async result. Modes: default, destructive.",
+    "async_action_flow": "Button-triggered async action with loading spinner and error feedback.",
+    "controller_service_page": "Page using controller/service separation. Modes: default, refreshable.",
+    "reusable_component": "Mode-driven reusable card component with summary and detail views.",
+    "list_detail": "List/detail layout with sidebar navigation and scrollable detail panel.",
+    "filterable_table": "Searchable, paginated data table. Modes: default, server_paginated.",
+    "form_sticky_actions": "Long-form page with sticky save/cancel action bar.",
+    "chart_sidebar_table": "Dashboard layout with sidebar filters, chart, and data table.",
+}
+
+
+def list_kinds() -> list[dict[str, str]]:
+    return [{"kind": kind, "description": desc} for kind, desc in COMPONENT_KINDS.items()]
+
 
 def generate_component(kind: str, mode: str = "default", details: dict | None = None) -> GenerationResult:
     details = details or {}
     normalized = kind.strip().lower().replace("-", "_").replace(" ", "_")
+    
+    # Validate against COMPONENT_KINDS
+    if normalized not in COMPONENT_KINDS:
+        raise ValueError(f"Unknown generator kind: {kind}")
+    
     generators = {
         "layout_shell": _layout_shell,
         "confirmation_dialog": _confirmation_dialog,
@@ -19,10 +40,7 @@ def generate_component(kind: str, mode: str = "default", details: dict | None = 
         "form_sticky_actions": _form_sticky_actions,
         "chart_sidebar_table": _chart_sidebar_table,
     }
-    try:
-        return generators[normalized](mode=mode, details=details)
-    except KeyError as exc:
-        raise ValueError(f"Unknown generator kind: {kind}") from exc
+    return generators[normalized](mode=mode, details=details)
 
 
 def _layout_shell(mode: str, details: dict) -> GenerationResult:
