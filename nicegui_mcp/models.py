@@ -71,3 +71,12 @@ class ReviewResult(BaseModel):
     applied_fixes: list[AppliedFix] = Field(default_factory=list)
     improvement: str | None = None
     summary: str
+
+
+class PatternResult(BaseModel):
+    pattern_name: str
+    title: str
+    snippet: str
+    explanation: str
+    pitfalls: list[str] = Field(default_factory=list)
+    version_notes: str | None = None

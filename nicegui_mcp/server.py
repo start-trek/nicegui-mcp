@@ -7,6 +7,7 @@ from mcp.server.fastmcp import FastMCP
 from .analyzers import analyze_code
 from .fixers import fix_code
 from .generators import generate_component, list_kinds
+from .patterns import get_pattern_by_name, list_pattern_names
 from .registry import available_topics, get_topic, load_guidance_text, search_guidance_text
 from .reviewer import review_code
 
@@ -167,6 +168,17 @@ def generate_nicegui_component(kind: str, mode: str = "default", details_json: s
     Use `list_component_kinds` to discover kinds and their descriptions."""
     details = json.loads(details_json) if details_json else {}
     return generate_component(kind=kind, mode=mode, details=details).model_dump(mode="json")
+
+
+@mcp.tool()
+def get_pattern(pattern_name: str) -> dict:
+    """Retrieve a ready-to-use NiceGUI implementation pattern with code snippet, explanation, and pitfalls.
+
+    Available patterns: async_ui_update, dialog_open_close, timer_driven_refresh,
+    table_crud, value_binding, background_task, navigation_pages, scroll_area_setup.
+
+    Returns a complete snippet you can adapt directly, plus common pitfalls to avoid."""
+    return get_pattern_by_name(pattern_name).model_dump(mode="json")
 
 
 def main() -> None:

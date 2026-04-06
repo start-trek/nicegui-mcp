@@ -5,6 +5,7 @@ from nicegui_mcp.server import (
     fix_nicegui_code,
     generate_nicegui_component,
     get_guidance,
+    get_pattern,
     list_component_kinds,
     list_topics,
     search_guidance,
@@ -77,3 +78,9 @@ def test_preflight_resource() -> None:
     content = preflight()
     assert "review_nicegui_code" in content
     assert "min-h-0" in content
+
+
+def test_get_pattern_tool() -> None:
+    result = get_pattern("async_ui_update")
+    assert "snippet" in result
+    assert result["snippet"]
