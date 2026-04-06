@@ -36,6 +36,11 @@ def test_analyze_tool() -> None:
     assert any(finding["rule_id"] == "NGL-003" for finding in result["findings"])
 
 
+def test_analyze_with_context() -> None:
+    result = analyze_nicegui_code("from nicegui import ui\nui.run(reload=True)\n", context="main entrypoint")
+    assert any(finding["rule_id"] == "NGL-019" for finding in result["findings"])
+
+
 def test_fix_tool() -> None:
     result = fix_nicegui_code("ui.button('Save').props('width=50%')\n")
     assert ".style('width: 50%')" in result["updated_code"]

@@ -119,6 +119,17 @@ def analyze_nicegui_code(
     Detects: layout/spacing problems, blocking calls in handlers, async handlers without
     feedback, scroll area height bugs, styling/props conflicts, non-persistent destructive
     dialogs, monolithic page functions, logic-heavy handlers, and state management smells.
+
+    Parameters:
+    - code: the NiceGUI code to analyze.
+    - focus: optional list of topic names to restrict which rules run. Valid values:
+      layout, spacing, scrolling, async, performance, styling, theming, dialogs,
+      state, components, architecture, forms, data_views, tables, charts,
+      deployment, runtime, testing. Omit to run all rules.
+    - filename: optional filename hint, used to assess production-entrypoint rules.
+    - context: optional description of the file's role (e.g., 'main entrypoint',
+      'reusable component'). Used alongside filename for entrypoint detection.
+
     For most workflows, prefer `review_nicegui_code` which combines analysis with auto-fix."""
     return analyze_code(code=code, focus=focus, filename=filename, context=context).model_dump(mode="json")
 
@@ -139,7 +150,21 @@ def generate_nicegui_component(kind: str, mode: str = "default", details_json: s
     Valid kinds: layout_shell, confirmation_dialog, async_action_flow, controller_service_page,
     reusable_component, list_detail, filterable_table, form_sticky_actions, chart_sidebar_table.
 
-    Use `list_component_kinds` to discover kinds and their supported modes."""
+    Parameters:
+    - kind: the component kind to generate (see list above).
+    - mode: optional variant. Supported modes by kind:
+      confirmation_dialog: 'default', 'destructive'.
+      controller_service_page: 'default', 'refreshable'.
+      filterable_table: 'default', 'server_paginated'.
+      All other kinds: 'default' only.
+    - details_json: optional JSON string with customization keys. Supported keys by kind:
+      layout_shell: {"title": "App Name"}.
+      confirmation_dialog: {"title": "...", "message": "...", "action_label": "..."}.
+      async_action_flow: {"button_label": "..."}.
+      controller_service_page: {"page_name": "..."}.
+      reusable_component: {"component_name": "..."}.
+
+    Use `list_component_kinds` to discover kinds and their descriptions."""
     details = json.loads(details_json) if details_json else {}
     return generate_component(kind=kind, mode=mode, details=details).model_dump(mode="json")
 
