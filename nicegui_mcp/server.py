@@ -8,11 +8,25 @@ from .analyzers import analyze_code
 from .fixers import fix_code
 from .generators import generate_component
 from .registry import available_topics, get_topic, load_guidance_text, search_guidance_text
+from .reviewer import review_code
 
 INSTRUCTIONS = (
     "NiceGUI MCP is a docs-first, static-analysis MCP server for local NiceGUI development. "
     "Use it to read bundled guidance, search topic docs, analyze code snippets for common NiceGUI issues, "
     "apply narrow deterministic fixes, and generate starter patterns for common app structures."
+)
+
+PREFLIGHT_CONTENT = (
+    "# NiceGUI MCP Preflight\n\n"
+    "**When to invoke:** After writing or generating NiceGUI code, before finalizing.\n\n"
+    "**Preferred tool:** Use `review_nicegui_code` as the default entry point.\n\n"
+    "**Common NiceGUI mistakes the MCP catches:**\n\n"
+    "1. Blocking calls (`time.sleep`, `requests.get`) in UI event handlers\n"
+    "2. Missing `min-h-0` on flex parents of scroll areas\n"
+    "3. CSS properties passed via `.props()` instead of `.style()`\n"
+    "4. Non-persistent dialogs for destructive actions\n"
+    "5. Async handlers without loading/error feedback\n\n"
+    "**Convention:** Before shipping NiceGUI code, run `review_nicegui_code`."
 )
 
 mcp = FastMCP(
@@ -21,6 +35,11 @@ mcp = FastMCP(
     stateless_http=True,
     json_response=True,
 )
+
+
+@mcp.resource("nicegui-mcp://preflight")
+def preflight() -> str:
+    return PREFLIGHT_CONTENT
 
 
 @mcp.resource("nicegui://topics/index")
@@ -32,6 +51,20 @@ def topic_index() -> str:
 @mcp.resource("nicegui://guidance/{topic}")
 def guidance_resource(topic: str) -> str:
     return load_guidance_text(topic)
+
+
+@mcp.tool()
+def review_nicegui_code(code: str, auto_fix: bool = True) -> dict:
+    """Review NiceGUI code for correctness issues, apply safe fixes, and suggest improvements.
+
+    This is the recommended entry point after writing or generating NiceGUI code.
+    Submit your code and receive: issues found, severity and confidence ratings,
+    auto-applied fixes for safe corrections, and one recommended improvement.
+
+    Common issues detected: missing await in async callbacks, stale closure bugs,
+    incorrect binding usage, misuse of layout context managers, blocking calls in
+    handlers, non-persistent destructive dialogs, and styling/props conflicts."""
+    return review_code(code=code, auto_fix=auto_fix).model_dump(mode="json")
 
 
 @mcp.tool()

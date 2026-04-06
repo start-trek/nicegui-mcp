@@ -8,6 +8,8 @@ from nicegui_mcp.server import (
     list_topics,
     search_guidance,
     topic_index,
+    review_nicegui_code,
+    preflight,
 )
 
 
@@ -47,3 +49,20 @@ def test_generate_tool() -> None:
 def test_topic_resource() -> None:
     payload = topic_index()
     assert "layout_spacing_scrolling" in payload
+
+
+def test_review_tool() -> None:
+    result = review_nicegui_code("ui.button('Save').props('width=50%')")
+    assert "issues" in result
+    assert len(result["issues"]) >= 1
+
+
+def test_review_tool_auto_fix_false() -> None:
+    result = review_nicegui_code("ui.button('Save').props('width=50%')", auto_fix=False)
+    assert result["fixed_code"] is None
+
+
+def test_preflight_resource() -> None:
+    content = preflight()
+    assert "review_nicegui_code" in content
+    assert "min-h-0" in content
