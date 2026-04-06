@@ -52,3 +52,22 @@ class GenerationResult(BaseModel):
     mode: str
     code: str
     notes: list[str] = Field(default_factory=list)
+
+
+class ReviewIssue(BaseModel):
+    rule_id: str
+    severity: Literal["error", "warning", "info"]
+    title: str
+    message: str
+    suggestion: str | None = None
+    confidence: Literal["high", "medium", "low"] = "medium"
+    auto_fixable: bool = False
+    fixed: bool = False
+
+
+class ReviewResult(BaseModel):
+    issues: list[ReviewIssue] = Field(default_factory=list)
+    fixed_code: str | None = None
+    applied_fixes: list[AppliedFix] = Field(default_factory=list)
+    improvement: str | None = None
+    summary: str
